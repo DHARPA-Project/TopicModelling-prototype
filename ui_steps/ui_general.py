@@ -1,6 +1,9 @@
 from dash import html
 import dash_bootstrap_components as dbc
 
+from ui_steps.ui_step1 import step1
+from ui_steps.ui_step2 import step2
+
 steps = html.Div(
     [
     dbc.Tabs(

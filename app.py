@@ -2,10 +2,8 @@ import dash
 from dash import html, Input, Output, State
 import dash_bootstrap_components as dbc
 
-from ui_els.ui_data_selection import step1
-from ui_els.ui_data_selection import step2
-from ui_els.ui_nb import static_nb_view
-from ui_els.ui_general import steps
+from ui_steps.ui_nb import static_nb_view
+from ui_steps.ui_general import steps
 
 
 app = dash.Dash(external_stylesheets=[dbc.themes.FLATLY])
