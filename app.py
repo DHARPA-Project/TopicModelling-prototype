@@ -8,8 +8,12 @@ from ui_steps.ui_general import steps
 
 from processing_steps.pr_step1 import get_df
 
+app = dash.Dash(external_stylesheets=[dbc.themes.FLATLY],include_assets_files=False)
 
-app = dash.Dash(external_stylesheets=[dbc.themes.FLATLY])
+#links to assets for viz
+#src_index = app.get_asset_url('assets/index.js')
+#print(src_index)
+
 
 app_title = html.Div(children=[
     html.H2(['Topic Modelling'], 

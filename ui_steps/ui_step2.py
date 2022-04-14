@@ -1,6 +1,7 @@
 from dash import html
 import dash_bootstrap_components as dbc
 
+
 ui_step2 = dbc.Card(
     dbc.CardBody(
         [

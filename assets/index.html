@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>timestamped-corpus</title>
+<link rel="stylesheet" type="text/css" href="./inspector.css">
+<head></head>
+<body>
+<script src="https://cdn.jsdelivr.net/npm/d3@6"></script>
+<script type="module">
+
+import define from "./index.js";
+import {Runtime, Library, Inspector} from "./runtime.js";
+
+// console.log(document.querySelector('#chart'))
+
+const runtime = new Runtime();
+runtime.module(define, name => {
+        // console.log(name)
+      if (name === "style") {
+          //console.log(new Inspector)
+        return new Inspector(document.head)
+        //return new Inspector(document.body)
+        // document.head.appendChild(sc)
+      } 
+
+     if (name === "viewof chart") {   
+        // console.log(new Inspector)
+        var elem = document.createElement('div')
+        elem.setAttribute('id','chart')
+        document.body.appendChild(elem)
+        return new Inspector(document.querySelector("#chart"));
+   } 
+ });
+
+
+</script>
