@@ -1,9 +1,12 @@
 import dash
 from dash import html, Input, Output, State
 import dash_bootstrap_components as dbc
+import os
 
 from ui_steps.ui_nb import static_nb_view
 from ui_steps.ui_general import steps
+
+from processing_steps.pr_step1 import get_df
 
 
 app = dash.Dash(external_stylesheets=[dbc.themes.FLATLY])
@@ -22,12 +25,21 @@ app.layout = html.Div(children=[
 @app.callback(
     Output("offcanvas", "is_open"),
     Input("open-offcanvas", "n_clicks"),
-    [State("offcanvas", "is_open")],
-)
+    [State("offcanvas", "is_open")],)
 def toggle_offcanvas(n1, is_open):
     if n1:
         return not is_open
     return is_open
+
+
+@app.callback(Output("dd-output-container", "children"), [Input("corpus-selection", "value")])
+def output_text(value):
+
+    df = dbc.Table.from_dataframe(get_df(value)) if value != None else None
+
+    # id='dd-output-container')
+
+    return df
 
 
 if __name__ == "__main__":
