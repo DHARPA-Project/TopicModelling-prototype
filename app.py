@@ -32,14 +32,46 @@ def toggle_offcanvas(n1, is_open):
     return is_open
 
 
-@app.callback(Output("dd-output-container", "children"), [Input("corpus-selection", "value")])
+@app.callback(
+    Output("corpus-selection-head", "children"),
+    Output("corpus-selection-tail", "children"),
+    Output("corpus-selection-info", "children"),
+
+[Input("corpus-selection", "value")])
 def output_text(value):
 
-    df = dbc.Table.from_dataframe(get_df(value)) if value != None else None
+    result = get_df(value)
 
-    # id='dd-output-container')
+    if result:
 
-    return df
+        df_head = html.Div(children=[
+            html.H5("Dataset preview - head"
+        , className="card-title", style={'padding-top':'1em'}),
+            dbc.Table.from_dataframe(result[0]) 
+            ])
+        
+        df_tail = html.Div(children=[
+            html.H5("Dataset preview - tail"
+        , className="card-title", style={'padding-top':'1em'}),
+            dbc.Table.from_dataframe(result[1]) 
+            ]) 
+        
+        corpus_info = html.Div(children=[
+            html.H5("Dataset Info"
+        , className="card-title", style={'padding-top':'1em'}),
+             html.P(f"This corpus contains {result[2]} documents from {result[3]} titles", className="card-text") 
+            ]) 
+       
+
+
+        output = df_head, df_tail, corpus_info
+    
+        return output
+    
+    # prevent error display in debug mode
+    else:
+        return None,None,None
+    
 
 
 if __name__ == "__main__":
