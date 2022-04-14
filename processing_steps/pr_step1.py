@@ -45,8 +45,48 @@ def get_df(folder):
         preview1 = sources.head()
         preview2 = sources.tail()
 
+        # data for viz
+
+        df = sources[['date', 'publication_name', 'publication']].copy()
+        df['date'] = pd.to_datetime(df['date'])
+        df = df.set_index('date')
+
+        def data_agg(df,pub_list):
+
+            df_main = pd.DataFrame()
+
+            for publication in pub_list:
+
+                df_year = df.groupby([pd.Grouper(freq='Y'), 'publication_name']).count()
+                df_year['agg'] = 'year'
+                
+                df_month = df.groupby([pd.Grouper(freq='M'), 'publication_name']).count()
+                df_month['agg'] = 'month'
+
+                df_week = df.groupby([pd.Grouper(freq='W'), 'publication_name']).count()
+                df_week['agg'] = 'week'
+
+                df_day = df.groupby([pd.Grouper(freq='D'), 'publication_name']).count()
+                df_day['agg'] = 'day'
+
+                df_main = pd.concat([df_main, df_year,df_month,df_day])
+            
+            return df_main
+        
+        df_distrib = data_agg(df,publications_list)
+
+        # cleaning up
+        df_distrib = df_distrib.rename(columns={"publication": "count"})
+        df_distrib = df_distrib.reset_index(level=['date', 'publication_name'])
+        df_distrib = df_distrib.drop_duplicates()
+
+        df_distrib['date'] = df_distrib['date'].astype('string')
+        df_distrib['count'] = df_distrib['count'].astype('string')
+        viz_data = df_distrib.to_dict('records')
+        
+
     
-    return [preview1,preview2,len(files_list_flat),len(publications_list)] if dir_list and folder != None else None
+    return [preview1,preview2,len(files_list_flat),len(publications_list),viz_data] if dir_list and folder != None else None
     
 
 

@@ -7,6 +7,7 @@ from ui_steps.ui_nb import static_nb_view
 from ui_steps.ui_general import steps
 
 from processing_steps.pr_step1 import get_df
+from ui_steps.ui_step1_viz import create_viz_step1
 
 app = dash.Dash(external_stylesheets=[dbc.themes.FLATLY],include_assets_files=False)
 
@@ -40,7 +41,7 @@ def toggle_offcanvas(n1, is_open):
     Output("corpus-selection-head", "children"),
     Output("corpus-selection-tail", "children"),
     Output("corpus-selection-info", "children"),
-
+    Output("corpus-selection-viz", "children"),
 [Input("corpus-selection", "value")])
 def output_text(value):
 
@@ -65,16 +66,20 @@ def output_text(value):
         , className="card-title", style={'padding-top':'1em'}),
              html.P(f"This corpus contains {result[2]} documents from {result[3]} titles", className="card-text") 
             ]) 
-       
 
+       # print(create_viz_step1(result[4]))
 
-        output = df_head, df_tail, corpus_info
+        viz = html.Div(children=[
+            create_viz_step1(result[4]),
+            ])
+
+        output = df_head, df_tail, corpus_info, viz
     
         return output
     
     # prevent error display in debug mode
     else:
-        return None,None,None
+        return None,None,None,None
     
 
 

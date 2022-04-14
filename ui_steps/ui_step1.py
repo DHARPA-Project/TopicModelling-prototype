@@ -28,42 +28,12 @@ ui_step1 = html.Div(children=[
 
         html.Div(id='corpus-selection-info'),
 
+        html.Div(id='corpus-selection-viz'),
+
         ]
     ),
     className="mt-3",),
     
-    html.Iframe(srcDoc=f"""
-    <!DOCTYPE html>
-    <meta charset="utf-8">
-    <title>timestamped-corpus</title>
-    <link rel="stylesheet" type="text/css" href="../assets/inspector.css">
-    <head></head>
-    <body>
-    <script src="https://cdn.jsdelivr.net/npm/d3@6"></script>
-    <script type="module">
-
-    import define from "../assets/index.js";
-    import {{Runtime, Library, Inspector}} from "../assets/runtime.js";
-
-
-    const runtime = new Runtime();
-    runtime.module(define, name => {{
-        if (name === "style") {{
-            //console.log(new Inspector)
-            return new Inspector(document.head)
-            //return new Inspector(document.body)
-            // document.head.appendChild(sc)
-        }} 
-
-        if (name === "viewof chart") {{   
-            var elem = document.createElement('div')
-            elem.setAttribute('id','chart')
-            document.body.appendChild(elem)
-            return new Inspector(document.querySelector("#chart"));
-    }} 
-    }});
-    </script>
-     """,style={'width':'100%'},height=500)
     
     ])
 
