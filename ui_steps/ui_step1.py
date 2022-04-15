@@ -4,6 +4,7 @@ import dash_bootstrap_components as dbc
 
 from processing_steps.pr_step1 import dir_list
 
+
 ui_step1 = html.Div(children=[
     dbc.Card(
     dbc.CardBody(
@@ -27,6 +28,11 @@ ui_step1 = html.Div(children=[
         html.Div(id='corpus-selection-tail'),
 
         html.Div(id='corpus-selection-info'),
+
+        html.Div(children=[
+            dcc.RadioItems(['blue', 'green','grey', 'orange', 'purple', 'red'], 'blue', inline=True, id="select-color"),
+        ],id='radio_container', style={"display":"none"}),
+        
 
         html.Div(id='corpus-selection-viz'),
 

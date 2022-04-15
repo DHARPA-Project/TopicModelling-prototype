@@ -1,5 +1,6 @@
 import dash
 from dash import html, Input, Output, State
+from dash.exceptions import PreventUpdate
 import dash_bootstrap_components as dbc
 import os
 
@@ -10,11 +11,6 @@ from processing_steps.pr_step1 import get_df
 from ui_steps.ui_step1_viz import create_viz_step1
 
 app = dash.Dash(external_stylesheets=[dbc.themes.FLATLY],include_assets_files=False)
-
-#links to assets for viz
-#src_index = app.get_asset_url('assets/index.js')
-#print(src_index)
-
 
 app_title = html.Div(children=[
     html.H2(['Topic Modelling'], 
@@ -41,13 +37,19 @@ def toggle_offcanvas(n1, is_open):
     Output("corpus-selection-head", "children"),
     Output("corpus-selection-tail", "children"),
     Output("corpus-selection-info", "children"),
+    Output("radio_container", "style"),
     Output("corpus-selection-viz", "children"),
-[Input("corpus-selection", "value")])
-def output_text(value):
+[Input("corpus-selection", "value"),
+Input('select-color', 'value'),])
+
+def output_text(value,color):
 
     result = get_df(value)
 
-    if result:
+    if result is None:
+        raise PreventUpdate
+
+    elif result:
 
         df_head = html.Div(children=[
             html.H5("Dataset preview - head"
@@ -67,19 +69,19 @@ def output_text(value):
              html.P(f"This corpus contains {result[2]} documents from {result[3]} titles", className="card-text") 
             ]) 
 
-       # print(create_viz_step1(result[4]))
+        st = {'display': 'inline'}
 
         viz = html.Div(children=[
-            create_viz_step1(result[4]),
+            create_viz_step1(result[4],color),
             ])
 
-        output = df_head, df_tail, corpus_info, viz
+        output = df_head, df_tail, corpus_info, st, viz
     
         return output
     
     # prevent error display in debug mode
     else:
-        return None,None,None,None
+        return None,None,None,None,None
     
 
 
