@@ -1,4 +1,4 @@
-// https://observablehq.com/@dharpa-project/timestamped-corpus@201
+// https://observablehq.com/@dharpa-project/timestamped-corpus@205
 import define1 from "./a2e58f97fd5e8d7c@674.js";
 import define2 from "./8d271c22db968ab0@160.js";
 
@@ -261,8 +261,12 @@ function _scaleType(scaleTypeTest){return(
 scaleTypeTest.scale
 )}
 
-function _color(getColor,colorScheme){return(
-getColor(colorScheme.value)[0]
+function _userColor(colorScheme){return(
+colorScheme.value
+)}
+
+function _color(getColor,userColor){return(
+getColor(userColor)[0]
 )}
 
 function _color2(getColor,colorScheme){return(
@@ -296,7 +300,7 @@ function _getData(d3,source){return(
 }
 )}
 
-function _21(md){return(
+function _22(md){return(
 md`### Functions for vizualisation `
 )}
 
@@ -393,7 +397,7 @@ function _ticksDay(dates_list){return(
 }
 )}
 
-function _34(md){return(
+function _35(md){return(
 md`### Data`
 )}
 
@@ -413,11 +417,11 @@ function _source(FileAttachment){return(
 FileAttachment("df_distrib@1.csv").csv()
 )}
 
-function _39(md){return(
+function _40(md){return(
 md`### Imports`
 )}
 
-function _42(md){return(
+function _43(md){return(
 md`### Styling`
 )}
 
@@ -468,11 +472,12 @@ export default function define(runtime, observer) {
   main.variable(observer("axisLabel")).define("axisLabel", ["axisLabelTest"], _axisLabel);
   main.variable(observer("margin")).define("margin", _margin);
   main.variable(observer("scaleType")).define("scaleType", ["scaleTypeTest"], _scaleType);
-  main.variable(observer("color")).define("color", ["getColor","colorScheme"], _color);
+  main.variable(observer("userColor")).define("userColor", ["colorScheme"], _userColor);
+  main.variable(observer("color")).define("color", ["getColor","userColor"], _color);
   main.variable(observer("color2")).define("color2", ["getColor","colorScheme"], _color2);
   main.variable(observer("getColor")).define("getColor", ["d3"], _getColor);
   main.variable(observer("getData")).define("getData", ["d3","source"], _getData);
-  main.variable(observer()).define(["md"], _21);
+  main.variable(observer()).define(["md"], _22);
   main.variable(observer("height")).define("height", ["publications","margin"], _height);
   main.variable(observer("interval")).define("interval", ["axisLabel","d3"], _interval);
   main.variable(observer("x2")).define("x2", ["d3","ticks","margin","width"], _x2);
@@ -485,17 +490,17 @@ export default function define(runtime, observer) {
   main.variable(observer("ticksYear")).define("ticksYear", ["dates_list"], _ticksYear);
   main.variable(observer("ticksMonth")).define("ticksMonth", ["dates_list"], _ticksMonth);
   main.variable(observer("ticksDay")).define("ticksDay", ["dates_list"], _ticksDay);
-  main.variable(observer()).define(["md"], _34);
+  main.variable(observer()).define(["md"], _35);
   main.variable(observer("dates_list")).define("dates_list", ["data"], _dates_list);
   main.variable(observer("publications")).define("publications", ["data"], _publications);
   main.variable(observer("data")).define("data", ["getData","timeSelected"], _data);
   main.variable(observer("source")).define("source", ["FileAttachment"], _source);
-  main.variable(observer()).define(["md"], _39);
+  main.variable(observer()).define(["md"], _40);
   const child1 = runtime.module(define1);
   main.import("Inputs", child1);
   const child2 = runtime.module(define2);
   main.import("form", child2);
-  main.variable(observer()).define(["md"], _42);
+  main.variable(observer()).define(["md"], _43);
   main.variable(observer("style")).define("style", ["html"], _style);
   return main;
 }

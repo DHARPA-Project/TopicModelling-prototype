@@ -1,0 +1,14 @@
+{
+  "name": "@dharpa-project/timestamped-corpus",
+  "main": "0ebd9d678bed6a60@205.js",
+  "version": "205.0.0",
+  "homepage": "https://observablehq.com/@dharpa-project/timestamped-corpus",
+  "author": {
+    "name": "dharpa-project",
+    "url": "https://observablehq.com/@dharpa-project"
+  },
+  "type": "module",
+  "peerDependencies": {
+    "@observablehq/runtime": "4"
+  }
+}
