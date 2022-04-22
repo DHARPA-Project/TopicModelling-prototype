@@ -1,27 +1,52 @@
 import dash
-from dash import html, Input, Output, State
-from dash.exceptions import PreventUpdate
+import dash_labs as dl
 import dash_bootstrap_components as dbc
-import os
+from dash import html, Input, Output, State
 
-from ui_steps.ui_nb import static_nb_view
-from ui_steps.ui_general import steps
 
-from processing_steps.pr_step1 import get_df
-from ui_steps.ui_step1_viz import create_viz_step1
+app = dash.Dash(
+    __name__, plugins=[dl.plugins.pages], external_stylesheets=[dbc.themes.FLATLY], include_assets_files=False, suppress_callback_exceptions=True
+    )
 
-app = dash.Dash(external_stylesheets=[dbc.themes.FLATLY],include_assets_files=False)
+nb_view = html.Div(
+    [
+        dbc.Button("Open notebook view", id="open-offcanvas", n_clicks=0),
+        dbc.Offcanvas(
+            html.P(
+                "This may contain static notebook view mock-up at later stage."
+            ),
+            id="offcanvas",
+            title="Title",
+            placement="end",
+            is_open=False,
+            
+        ),
+    ],
+    style={'display':'block','float':'right', 'padding':'1em'}
+)
 
-app_title = html.Div(children=[
-    html.H2(['Topic Modelling'], 
-            style={'padding':'.2em'})
-])
+navbar = dbc.NavbarSimple(children=[
+    
+    dbc.DropdownMenu(
+        [
+            dbc.DropdownMenuItem(page["name"], href=page["path"])
+            for page in dash.page_registry.values()
+            if page["module"] != "pages.not_found_404"
+        ],
+        nav=True,
+        label="Workflow steps",
+        style={"padding":"1em"}
+        
+    ),
+    nb_view,
 
-app.layout = html.Div(children=[
-    app_title,
-    static_nb_view,
-    steps
-])
+    ],brand='Topic Modelling')
+
+
+app.layout = dbc.Container(
+    [navbar, dl.plugins.page_container],
+
+)
 
 @app.callback(
     Output("offcanvas", "is_open"),
@@ -33,58 +58,5 @@ def toggle_offcanvas(n1, is_open):
     return is_open
 
 
-@app.callback(
-    Output("corpus-selection-head", "children"),
-    Output("corpus-selection-tail", "children"),
-    Output("corpus-selection-info", "children"),
-    Output("radio_container", "style"),
-    Output("corpus-selection-viz", "children"),
-[Input("corpus-selection", "value"),
-Input('select-color', 'value'),])
-
-def output_text(value,color):
-
-    result = get_df(value)
-
-    if result is None:
-        raise PreventUpdate
-
-    elif result:
-
-        df_head = html.Div(children=[
-            html.H5("Dataset preview - head"
-        , className="card-title", style={'padding-top':'1em'}),
-            dbc.Table.from_dataframe(result[0]) 
-            ])
-        
-        df_tail = html.Div(children=[
-            html.H5("Dataset preview - tail"
-        , className="card-title", style={'padding-top':'1em'}),
-            dbc.Table.from_dataframe(result[1]) 
-            ]) 
-        
-        corpus_info = html.Div(children=[
-            html.H5("Dataset Info"
-        , className="card-title", style={'padding-top':'1em'}),
-             html.P(f"This corpus contains {result[2]} documents from {result[3]} titles", className="card-text") 
-            ]) 
-
-        st = {'display': 'inline'}
-
-        viz = html.Div(children=[
-            create_viz_step1(result[4],color),
-            ])
-
-        output = df_head, df_tail, corpus_info, st, viz
-    
-        return output
-    
-    # prevent error display in debug mode
-    else:
-        return None,None,None,None,None
-    
-
-
 if __name__ == "__main__":
     app.run_server(debug=True)
-
