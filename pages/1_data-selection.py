@@ -51,11 +51,31 @@ corpus_result = html.Div(children=[
         dbc.Tab(tab2, label="Dataset tail")
         ]),
         html.Div(id='corpus-selection-info'),
-        html.Div(id='radio_container', children=[
-            dcc.RadioItems(id='select-color', options = ['blue', 'green','grey', 'orange', 'purple', 'red'], value='blue', inline=True, labelStyle={"padding":"1em"}),
+        html.H5("Dataset exploration and filtering"
+            , className="card-title", style={'padding-top':'1em'}),
+        dbc.Row(
+            [
+                dbc.Col(html.Div([
+                    html.P('Display settings'),
+                                     
+                    html.Div(id='radio_container', children=[
+                        dcc.Dropdown(id='select-color',
+                    options= ['blue', 'green','grey', 'orange', 'purple', 'red'],
+                    value='blue',
+                    placeholder="Select color",
+                    ),
+            #dcc.RadioItems(id='select-color', options = ['blue', 'green','grey', 'orange', 'purple', 'red'], value='blue', inline=True, labelStyle={"padding":"1em"}),
         ]),
+                    
+                ]), width=2, style={'padding-top':'1em'}),
+                dbc.Col(html.Div([
+            html.Div(id='corpus-selection-viz'),
+                ]), width=10),
+            ]
+        ),
         
-        html.Div(id='corpus-selection-viz'),
+        
+        
 ])
 
 @callback(
@@ -100,11 +120,8 @@ def output_text(value,color):
                 html.P(f"This corpus contains {result[2]} documents from {result[3]} titles", className="card-text") 
                 ]) 
             
-        
-            html.Div(id='corpus-selection-viz'),
-
             viz = html.Div(children=[
-                create_viz_step1(result[4],color),
+                create_viz_step1(result[4],color or 'blue'),
                 ])
 
             output = df_head, df_tail, corpus_info, viz
