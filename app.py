@@ -1,7 +1,7 @@
 import dash
 import dash_labs as dl
 import dash_bootstrap_components as dbc
-from dash import html, Input, Output, State
+from dash import html, Input, Output, State, dcc
 
 
 app = dash.Dash(
@@ -44,7 +44,7 @@ navbar = dbc.NavbarSimple(children=[
 
 
 app.layout = dbc.Container(
-    [navbar, dl.plugins.page_container],
+    [navbar,dcc.Store(id="stored-data", data=None), dl.plugins.page_container],
 
 )
 

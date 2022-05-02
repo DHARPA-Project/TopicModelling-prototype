@@ -85,9 +85,12 @@ def get_df(folder):
         viz_data = df_distrib.to_dict('records')
         
 
-    
-    return [preview1,preview2,len(files_list_flat),len(publications_list),viz_data] if dir_list and folder != None else None
-    
+    return {'preview1': preview1.to_dict('records'),
+            'preview2': preview2.to_dict('records'),
+            'files-len': len(files_list_flat),
+            'pub-list-len': len(publications_list),
+            'viz-data': viz_data
+            } if dir_list and folder != None else None    
 
 
 
