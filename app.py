@@ -40,7 +40,7 @@ navbar = dbc.NavbarSimple(children=[
     ),
     nb_view,
 
-    ],brand='Topic Modelling')
+    ],brand='LUMY PROTOTYPING / Topic Modelling')
 
 
 app.layout = dbc.Container(

@@ -82,6 +82,7 @@ def get_df(folder):
 
         df_distrib['date'] = df_distrib['date'].astype('string')
         df_distrib['count'] = df_distrib['count'].astype('string')
+        df_distrib = df_distrib.sort_values(by='date')
         viz_data = df_distrib.to_dict('records')
         
 
