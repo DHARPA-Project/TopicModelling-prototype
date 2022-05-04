@@ -1,10 +1,15 @@
 import dash 
-from dash import html
+from dash import html, dcc
 
 dash.register_page(__name__)
 
 layout = html.Div(
     [
-        html.P("This is a test for page 2")
+        html.P("Select a subset to work with"
+        , className="card-text"),
+        
+        dcc.Dropdown(
+            ['subset-1917']
+        ),
     ]
 )

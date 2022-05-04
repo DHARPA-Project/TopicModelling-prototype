@@ -41,6 +41,8 @@ def get_df(folder):
         sources['publication'] = sources['file_name'].apply(lambda x: get_ref(x))
 
         sources['publication_name'] = sources['publication'].replace(pub_refs, pub_names)
+        sources['date'] = pd.to_datetime(sources['date'])
+        sources = sources.sort_values(by='date')
 
         preview1 = sources.head()
         preview2 = sources.tail()
@@ -80,8 +82,12 @@ def get_df(folder):
         df_distrib = df_distrib.reset_index(level=['date', 'publication_name'])
         df_distrib = df_distrib.drop_duplicates()
 
-        df_distrib['date'] = df_distrib['date'].astype('string')
+        #df_distrib['date'] = df_distrib['date'].astype('string')
+        df_distrib['date'] = pd.to_datetime(df_distrib['date'])
         df_distrib['count'] = df_distrib['count'].astype('string')
+
+        print(df_distrib.head())
+       
         df_distrib = df_distrib.sort_values(by='date')
         viz_data = df_distrib.to_dict('records')
         

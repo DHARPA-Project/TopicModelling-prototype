@@ -1,6 +1,6 @@
 from dash import html
 
-def create_viz_step1(input_data,color,height):
+def create_viz_step1(input_data,color,height,scale_type):
     timestamped_corpus = html.Iframe(srcDoc=f"""
             <!DOCTYPE html>
             <meta charset="utf-8">
@@ -32,6 +32,7 @@ def create_viz_step1(input_data,color,height):
 
             main.redefine("source",{input_data})
             main.redefine("userColor","{color}")
+            main.redefine("scaleType","{scale_type}")
 
             </script>
             """,style={'width':'100%'},height=height)

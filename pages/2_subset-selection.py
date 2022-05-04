@@ -18,6 +18,7 @@ layout = html.Div(children=[
         dbc.Row(
             [
                 dbc.Col(html.Div([
+                    
                     html.P('Display settings'),
                                      
                     html.Div(id='radio_container', children=[
@@ -26,8 +27,15 @@ layout = html.Div(children=[
                     value='blue',
                     placeholder="Select color",
                     ),
-            #dcc.RadioItems(id='select-color', options = ['blue', 'green','grey', 'orange', 'purple', 'red'], value='blue', inline=True, labelStyle={"padding":"1em"}),
-        ]),
+                      ],style={"padding-bottom":"1em"}),
+
+                    html.Div(id='radio_container2', children=[
+                        dcc.Dropdown(id='select-scale',
+                    options= ['color','height'],
+                    value='color',
+                    placeholder="Select scale type",
+                    ),
+                      ]),
                     
                 ]), width=2, style={'padding-top':'1em'}),
                 dbc.Col(html.Div([
@@ -65,9 +73,9 @@ layout = html.Div(children=[
                         ],style={'float':'right','padding':'1em'}),
                 ]),
                 
-                label="Data selection"),
+                label="Data selection", label_style={"color": "#2c3e50"}),
 
-                dbc.Tab(html.Div(), label="Visualization exploration")
+                dbc.Tab(html.Div(), label="Visualization exploration", label_style={"color": "#2c3e50"})
                 ]
             ),]
     ),
@@ -84,17 +92,18 @@ Output("datatable-advanced-filtering", "columns"),
 Output('reset-data','n_clicks'),
 [Input('stored-data','data'),
 Input('select-color', 'value'),
+Input('select-scale', 'value'),
 Input('datatable-advanced-filtering', 'derived_virtual_data'),
 Input('reset-data','n_clicks')
 ])
-def output_text(data,color,table,reset):
+def output_text(data,color,scale,table,reset):
     if data:
         viz_df = pd.DataFrame.from_dict(data['viz-data'])
         #viz_df['date'] = pd.to_datetime(viz_df['date'])
 
         viz_df = viz_df[viz_df['agg'] == 'month']
 
-        if len(table) > 0:       
+        if (table is not None) and (len(table) > 0):       
             viz_df = pd.DataFrame.from_dict(table)
 
 
@@ -108,7 +117,7 @@ def output_text(data,color,table,reset):
         height = 130 + len(viz_df['publication_name'].unique())*23
             
         viz = html.Div(children=[
-                create_viz_step1(viz_data, color or 'blue',height),
+                create_viz_step1(viz_data, color or 'blue',height, scale or 'color'),
                 ])
 
         table_columns = [{"name":i, "id": i} for i in viz_df.columns]
