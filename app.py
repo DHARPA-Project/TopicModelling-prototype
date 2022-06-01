@@ -69,7 +69,7 @@ navbar = dbc.NavbarSimple(children=[
 
 
 app.layout = dbc.Container(
-    [navbar,dcc.Store(id="stored-data", data=None), dl.plugins.page_container],
+    [navbar,dcc.Store(id="stored-data", data=None),dcc.Store(id="stored-subset", data=[]), dl.plugins.page_container],
 
 )
 

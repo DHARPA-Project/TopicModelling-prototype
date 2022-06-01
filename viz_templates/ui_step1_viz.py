@@ -1,6 +1,7 @@
 from dash import html
 
-def create_viz_step1(input_data,color,height,scale_type):
+def create_viz_step1(input_data,color,height,scale_type,agg):
+    
     timestamped_corpus = html.Iframe(srcDoc=f"""
             <!DOCTYPE html>
             <meta charset="utf-8">
@@ -27,13 +28,28 @@ def create_viz_step1(input_data,color,height,scale_type):
                     elem.setAttribute('id','chart')
                     document.body.appendChild(elem)
                     return new Inspector(document.querySelector("#chart"));
-            }} 
+                }} 
+
+                if (name === 'dateInfo') {{
+                    return {{
+                        fulfilled(value) {{ 
+                            const divDate = parent.document.getElementById('date-info')
+                            
+                            if (divDate !== null) {{
+                                 console.log('not null')
+                                divDate.value = value
+                            }}
+
+                            }},
+                    }};
+                }}
             }});
 
             main.redefine("source",{input_data})
+            main.redefine("timeSelected","{agg}")
             main.redefine("userColor","{color}")
             main.redefine("scaleType","{scale_type}")
-
+            
             </script>
             """,style={'width':'100%'},height=height)
         

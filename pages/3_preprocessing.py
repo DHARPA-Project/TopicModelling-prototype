@@ -1,5 +1,5 @@
 import dash 
-from dash import html, dcc
+from dash import html, dcc, callback, Input, Output
 
 dash.register_page(__name__)
 
@@ -9,7 +9,18 @@ layout = html.Div(
         , className="card-text"),
         
         dcc.Dropdown(
-            ['subset-1917']
+            id='subset-selection',
+            children = []
         ),
     ]
 )
+
+
+
+@callback(
+    Output('subset-selection','children'),
+    Input('stored-subset','data')
+)
+def load_subset(data):
+    print('hello')
+
