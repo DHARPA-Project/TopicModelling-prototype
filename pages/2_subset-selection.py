@@ -93,6 +93,7 @@ layout = html.Div(children=[
 
                 dbc.Tab(html.Div(children=[
                     html.Div(id='viz-data-display'),
+                    html.Div('This part is in a work in progress state'),
                     dcc.Input(id='date-info',value='')
 
                 ]), label="Visualization exploration", label_style={"color": "#2c3e50"})
