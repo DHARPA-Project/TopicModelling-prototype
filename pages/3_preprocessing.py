@@ -10,7 +10,7 @@ layout = html.Div(
         
         dcc.Dropdown(
             id='subset-selection',
-            children = []
+            options = []
         ),
     ]
 )
@@ -18,9 +18,13 @@ layout = html.Div(
 
 
 @callback(
-    Output('subset-selection','children'),
+    Output('subset-selection','options'),
     Input('stored-subset','data')
 )
 def load_subset(data):
-    print('hello')
+    if len(data) > 0:
+        subsets = [datum['alias'] for datum in data]
+        return subsets
+    else:
+        return 'No subset created'
 
