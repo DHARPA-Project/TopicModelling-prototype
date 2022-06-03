@@ -69,7 +69,7 @@ navbar = dbc.NavbarSimple(children=[
 
 
 app.layout = dbc.Container(
-    [navbar,dcc.Store(id="stored-data", data=None),dcc.Store(id="stored-subset", data=[]), dl.plugins.page_container],
+    [navbar,dcc.Store(id="stored-data", data=None),dcc.Store(id="stored-subset", data=[]),dcc.Store(id="viz-data", data=[]),dcc.Store(id="viz-date", data=[]), dl.plugins.page_container],
 
 )
 
@@ -81,6 +81,21 @@ def toggle_offcanvas(n1, is_open):
     if n1:
         return not is_open
     return is_open
+
+app.clientside_callback(
+    """
+    function(clicks,value) {
+        if (clicks>0) {
+            date = document.getElementById('date-info').value
+            return date
+
+        }
+    }
+    """,
+    Output("viz-date", "data"),
+    [Input('confirm-date',"n_clicks"),
+    Input("date-info", "value")],
+)
 
 
 if __name__ == "__main__":

@@ -36,7 +36,6 @@ def create_viz_step1(input_data,color,height,scale_type,agg):
                             const divDate = parent.document.getElementById('date-info')
                             
                             if (divDate !== null) {{
-                                 console.log('not null')
                                 divDate.value = value
                             }}
 

@@ -86,21 +86,7 @@ layout = html.Div(children=[
                     
                         ],style={'float':'right','padding':'1em'}),
                     
-                
-                ]),
-                
-                label="Data selection", label_style={"color": "#2c3e50"}),
-
-                dbc.Tab(html.Div(children=[
-                    html.Div(id='viz-data-display'),
-                    html.Div('This part is in a work in progress state'),
-                    dcc.Input(id='date-info',value='')
-
-                ]), label="Visualization exploration", label_style={"color": "#2c3e50"})
-                ]
-            ),
-            
-        dbc.Row(
+                    dbc.Row(
                html.Div(
                    children=[
                        html.H5('Subsets'),
@@ -113,7 +99,28 @@ layout = html.Div(children=[
                    ]
                         
                     )
-        )]
+        )
+                    
+                
+                ]),
+                
+                label="Data selection", label_style={"color": "#2c3e50"}),
+
+                dbc.Tab(html.Div(children=[
+                    html.Div(children=[
+                        html.Div('Click on date on top of corpus explorer to display related data',style={"padding-top":"1em", "padding-bottom":"1em"}),
+                        dbc.Input(value="No date selected", id='date-info', readonly=True,size="sm",style={"width": "10%","display":"inline","margin-right":"1em","background-color":"white"}),
+                        dbc.Button('View data', color="light", className="me-1", id='confirm-date', n_clicks=0),
+                    ]
+                    ),
+                    
+                    html.Div(id='viz-data-display', children=[]),
+
+                ]), label="Visualization exploration", label_style={"color": "#2c3e50"})
+                ]
+            ),
+            
+        ]
     ),
     className="mt-3",),
 
@@ -124,6 +131,7 @@ layout = html.Div(children=[
 Output("corpus-selection-viz", "children"),
 Output("datatable-advanced-filtering", "data"),
 Output("datatable-advanced-filtering", "columns"),
+Output("viz-data", "data"),
 Output('reset-data','n_clicks'),
 [Input('stored-data','data'),
 Input('select-color', 'value'),
@@ -159,7 +167,7 @@ def output_text(data,color,scale,agg,table,reset):
         table_columns = [{"name":i, "id": i} for i in viz_df.columns]
 
 
-        output = viz, viz_data, table_columns, 0
+        output = viz, viz_data, table_columns, viz_data, 0
         
         return output
 
@@ -180,10 +188,36 @@ def toggle_collapse(n, n2, is_open):
 
 @callback(  
 Output("viz-data-display", "children"),
-[Input("date-info", "value")
+Output('confirm-date','n_clicks'),
+[Input('confirm-date',"n_clicks"),
+Input("viz-date", "data"),
+Input('viz-data','data'),
+Input('select-agg', 'value'),
 ])
-def display_viz_data(dvalue):
-    print(dvalue)
+def display_viz_data(clicks,dvalue,data,agg):
+    if clicks > 0:
+        agg_level = agg or 'month'
+        viz_df = pd.DataFrame.from_dict(data)
+        date = dvalue.split(',')
+        print(date)
+        year = date[0]
+        month = date[1] if len(date[1]) > 1 else f"0{date[1]}"
+        day = date[2]
+        
+        #if agg_level == 'month':
+        data_tab = viz_df[viz_df['date'].apply(lambda x: x.startswith(f"{year}-{month}-")) ]
+        print(data_tab.head())
+        
+        tab = dbc.Table.from_dataframe(data_tab)
+
+        
+        return tab,0
+        
+        
+        
+
+        
+
 
 @callback(
 Output("stored-subset", "data"),
