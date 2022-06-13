@@ -5,7 +5,7 @@ from dash.exceptions import PreventUpdate
 import time
 import pandas as pd
 from processing_steps.pr_step1 import dir_list
-from processing_steps.pr_step1 import get_df
+#from processing_steps.onboarding import onboard_df
 
 dash.register_page(__name__, path="/")
 
@@ -19,19 +19,31 @@ layout = html.Div(children=[
         html.P("Inside the repository, one or more subfolders representing titles/publications need to contain text files named with the following convention: LCCN title information and publication date (yyyy-mm-dd), like for example: '/sn86069873/1900-01-05/'."
         , className="card-text"),
         
-        html.P("Select a corpus to work with"
+        html.P("Onboard corpus into Kiara"
         , className="card-text"),
-        
-        dcc.Dropdown(
+
+        html.Div(children=[
+            dcc.Dropdown(
             [dir for dir in dir_list],
             id = 'corpus-selection',
             persistence=True,
-            persistence_type='session'
+            persistence_type='session',
         ),
 
-        html.P(id='selected-corpus'),
+        html.Br(),
 
-        html.Div(id='corpus-result'),
+        dbc.Input(id="corpus-alias", placeholder="Corpus alias", type="text", persistence=True,
+            persistence_type='session'),
+
+        html.Br(),
+        
+        dbc.Button("Confirm", color="light", id='confirm-selection', className="me-1", n_clicks=0),
+
+        ], style={"width":"40%"}),
+
+        # html.P(id='selected-corpus'),
+
+        # html.Div(id='corpus-result'),
 
         ])]
     ),
@@ -48,55 +60,52 @@ corpus_result = html.Div(children=[
         [
         dbc.Tab(tab1, label="Dataset head", label_style={"color": "#2c3e50"}),
         dbc.Tab(tab2, label="Dataset tail", label_style={"color": "#2c3e50"})
-        ]),
-        
+        ]),       
 ])
 
+
 @callback(
-    Output('stored-data','data'),
-    Input('corpus-selection','value')
+    Output('corpus-selection-head','children'),
+    Output('confirm-selection','n_clicks'),
+    [Input('corpus-selection','value'),
+    Input('corpus-alias','value'),
+    Input('confirm-selection', 'n_clicks')]
 )
-def store_initial_dataset(value):
-    if value:
-        result = get_df(value)
-
-        return result
-
-@callback(
-Output("corpus-result", "children"),
-[Input("corpus-selection", "value"),])
-def display_corpus(value):
-    if value:
-        time.sleep(1)
-        return corpus_result
-
-@callback(
-Output("corpus-selection-head", "children"),
-Output("corpus-selection-tail", "children"),
-Output("corpus-selection-info", "children"),
-[Input('stored-data','data')])
-def context_el(data):
-    if data is not None:
-        
-        df_head = html.Div(children=[
-                html.H5("Dataset preview - head"
-            , className="card-title", style={'padding-top':'1em'}),
-                dbc.Table.from_dataframe(pd.DataFrame.from_dict(data['preview1'])) 
-                ])
-        df_tail = html.Div(children=[
-                html.H5("Dataset preview - tail"
-            , className="card-title", style={'padding-top':'1em'}),
-                dbc.Table.from_dataframe(pd.DataFrame.from_dict(data['preview2'])) 
-                ]) 
-            
-        corpus_info = html.Div(children=[
-                html.H5("Dataset Information"
-            , className="card-title", style={'padding-top':'1em'}),
-                html.P(f"This corpus contains {data['files-len']} documents from {data['pub-list-len']} titles", className="card-text",style={'padding-bottom':'2em'}) 
-                ])  
-
-        return df_head, df_tail, corpus_info
-    
+def preview_data(corpus,alias,confirm):
+    if confirm>0:
+        if corpus and alias:
+            print(corpus,alias,confirm)
+            return None,0
     else:
-
         raise PreventUpdate
+
+
+# @callback(
+#     Output('corpus-selection-head','children'),
+#     Output('corpus-selection-tail','children'),
+#     Output('confirm-selection','n_clicks'),
+#     #Input('corpus-selection','value'),
+#     #Input('corpus-alias','value'),
+#     Input('confirm-selection', 'n_clicks')
+# )
+# def preview_data(confirm):
+#     print(confirm)
+#     if confirm>0:
+#         print('hello')
+#         return ' ', ' ',0
+        # if corpus and alias:
+            
+        #     preview = onboard_df(corpus,alias)
+
+        #     df_head = html.Div(children=[
+        #         html.H5("Dataset preview - head"
+        #     , className="card-title", style={'padding-top':'1em'}),
+        #         dbc.Table.from_dataframe(preview[0]) 
+        #         ])
+        #     df_tail = html.Div(children=[
+        #             html.H5("Dataset preview - tail"
+        #         , className="card-title", style={'padding-top':'1em'}),
+        #             dbc.Table.from_dataframe(preview[1]) 
+        #             ]) 
+        #     return df_head, df_tail, 0
+

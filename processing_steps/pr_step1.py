@@ -1,3 +1,6 @@
+from kiara import Kiara
+from kiara import Kiara
+from kiara.interfaces.python_api.operation import KiaraOperation
 import os
 import pandas as pd
 import re
@@ -6,6 +9,22 @@ dir_list = [dir for dir in os.listdir('./datasets/') if dir != '.DS_Store']
 
 
 def get_df(folder):
+
+    kiara = Kiara.instance()
+
+   
+    op = KiaraOperation(kiara=kiara, operation_name="import.file_bundle")
+    inputs = {"path": folder}
+    job_id = op.queue_job(**inputs)
+
+    try:
+        op.save_result(
+        job_id=job_id, aliases={'file_bundle': 'text_file_bundle'}
+    )
+    except Exception:
+        pass
+
+    
     
     if dir_list and folder != None:
         
