@@ -1,6 +1,6 @@
 import dash 
 import dash_bootstrap_components as dbc
-from dash import dcc, html, Input, Output, callback
+from dash import dcc, html, Input, Output, callback, dash_table
 from dash.exceptions import PreventUpdate
 import time
 import pandas as pd
@@ -72,7 +72,6 @@ Output("corpus-result", "children"),
     Input('corpus-alias','value'),
     Input('confirm-selection', 'n_clicks')])
 def display_corpus(corpus,alias,confirm):
-    print(confirm)
     if confirm>0:   
         if corpus and alias:
             time.sleep(1)
@@ -95,12 +94,78 @@ def preview_data(corpus,alias,confirm):
             df_head = html.Div(children=[
                 html.H5("Dataset preview - head"
             , className="card-title", style={'padding-top':'1em'}),
-                dbc.Table.from_dataframe(preview[0]) 
+                dash_table.DataTable(
+
+                        preview[0].to_dict('records'),
+
+                        [{"name": i, "id": i} for i in preview[0].columns],
+
+                        id='tbl',
+
+                        css=[{
+                            'selector': '.dash-spreadsheet td div',
+                            'rule': '''
+                                line-height: 15px;
+                                max-height: 50px; min-height: 50px; height: 50px;
+                                display: block;
+                                overflow-y: scroll;
+                            '''
+                        }],
+
+                    #     tooltip_data=[
+                    #         {
+                    #         column: {'value': str(value), 'type': 'markdown'}
+                    #         for column, value in row.items()
+                    #         } for row in preview[1].to_dict('records')
+                    #     ],
+
+                    # tooltip_duration=None,
+
+                    style_cell={'font_family': 'var(--bs-body-font-family)','textAlign': 'left', 'fontSize':'var(--bs-body-font-size)', 'fontWeight':'var(--bs-body-font-weight)','lineHeight':'var(--bs-body-line-height)', 'padding':'.6em'},
+
+                    style_data={'font_family': 'var(--bs-body-font-family)','textAlign': 'left', 'fontSize':'var(--bs-body-font-size)', 'fontWeight':'var(--bs-body-font-weight)','lineHeight':'var(--bs-body-line-height)','whiteSpace': 'normal','height': 'auto'},
+
+                    )
+                   
                 ])
             df_tail = html.Div(children=[
                     html.H5("Dataset preview - tail"
                 , className="card-title", style={'padding-top':'1em'}),
-                    dbc.Table.from_dataframe(preview[1]) 
+                    
+                    dash_table.DataTable(
+
+                        preview[1].to_dict('records'),
+
+                        [{"name": i, "id": i} for i in preview[1].columns],
+
+                        id='tbl',
+
+                        css=[{
+                            'selector': '.dash-spreadsheet td div',
+                            'rule': '''
+                                line-height: 15px;
+                                max-height: 50px; min-height: 50px; height: 50px;
+                                display: block;
+                                overflow-y: scroll;
+                            '''
+                        }],
+
+                    #     tooltip_data=[
+                    #         {
+                    #         column: {'value': str(value), 'type': 'markdown'}
+                    #         for column, value in row.items()
+                    #         } for row in preview[1].to_dict('records')
+                    #     ],
+
+                    # tooltip_duration=None,
+
+                    style_cell={'font_family': 'var(--bs-body-font-family)','textAlign': 'left', 'fontSize':'var(--bs-body-font-size)', 'fontWeight':'var(--bs-body-font-weight)','lineHeight':'var(--bs-body-line-height)', 'padding':'.6em'},
+
+                    style_data={'font_family': 'var(--bs-body-font-family)','textAlign': 'left', 'fontSize':'var(--bs-body-font-size)', 'fontWeight':'var(--bs-body-font-weight)','lineHeight':'var(--bs-body-line-height)','whiteSpace': 'normal','height': 'auto'},
+
+                    )
+                                
+                    #dbc.Table.from_dataframe(preview[1]) 
                     ]) 
             return df_head, df_tail, 0
 
