@@ -5,7 +5,7 @@ from dash.exceptions import PreventUpdate
 import time
 import pandas as pd
 from processing_steps.pr_step1 import dir_list
-#from processing_steps.onboarding import onboard_df
+from processing_steps.onboarding import onboard_df
 
 dash.register_page(__name__, path="/")
 
@@ -41,9 +41,11 @@ layout = html.Div(children=[
 
         ], style={"width":"40%"}),
 
+         html.Br(),
+
         # html.P(id='selected-corpus'),
 
-        # html.Div(id='corpus-result'),
+        html.Div(id='corpus-result'),
 
         ])]
     ),
@@ -65,7 +67,20 @@ corpus_result = html.Div(children=[
 
 
 @callback(
+Output("corpus-result", "children"),
+    [Input('corpus-selection','value'),
+    Input('corpus-alias','value'),
+    Input('confirm-selection', 'n_clicks')])
+def display_corpus(corpus,alias,confirm):
+    print(confirm)
+    if confirm>0:   
+        if corpus and alias:
+            time.sleep(1)
+            return corpus_result
+
+@callback(
     Output('corpus-selection-head','children'),
+    Output('corpus-selection-tail','children'),
     Output('confirm-selection','n_clicks'),
     [Input('corpus-selection','value'),
     Input('corpus-alias','value'),
@@ -74,8 +89,21 @@ corpus_result = html.Div(children=[
 def preview_data(corpus,alias,confirm):
     if confirm>0:
         if corpus and alias:
-            print(corpus,alias,confirm)
-            return None,0
+
+            preview = onboard_df(corpus,alias)
+
+            df_head = html.Div(children=[
+                html.H5("Dataset preview - head"
+            , className="card-title", style={'padding-top':'1em'}),
+                dbc.Table.from_dataframe(preview[0]) 
+                ])
+            df_tail = html.Div(children=[
+                    html.H5("Dataset preview - tail"
+                , className="card-title", style={'padding-top':'1em'}),
+                    dbc.Table.from_dataframe(preview[1]) 
+                    ]) 
+            return df_head, df_tail, 0
+
     else:
         raise PreventUpdate
 
