@@ -4,6 +4,7 @@ from dash import dcc, html, Input, Output, callback, dash_table
 from dash.exceptions import PreventUpdate
 import time
 import pandas as pd
+from pyparsing import White
 from processing_steps.pr_step1 import dir_list
 from processing_steps.onboarding import onboard_df
 
@@ -78,6 +79,7 @@ def display_corpus(corpus,alias,confirm):
             return corpus_result
 
 @callback(
+    Output('initial-alias','data'),
     Output('corpus-selection-head','children'),
     Output('corpus-selection-tail','children'),
     Output('confirm-selection','n_clicks'),
@@ -100,7 +102,7 @@ def preview_data(corpus,alias,confirm):
 
                         [{"name": i, "id": i} for i in preview[0].columns],
 
-                        id='tbl',
+                        id='tbl1',
 
                         css=[{
                             'selector': '.dash-spreadsheet td div',
@@ -121,10 +123,17 @@ def preview_data(corpus,alias,confirm):
 
                     # tooltip_duration=None,
 
-                    style_cell={'font_family': 'var(--bs-body-font-family)','textAlign': 'left', 'fontSize':'var(--bs-body-font-size)', 'fontWeight':'var(--bs-body-font-weight)','lineHeight':'var(--bs-body-line-height)', 'padding':'.6em'},
+                    style_cell={'textAlign': 'left','lineHeight':'var(--bs-body-line-height)', 'padding':'.6em'},
 
-                    style_data={'font_family': 'var(--bs-body-font-family)','textAlign': 'left', 'fontSize':'var(--bs-body-font-size)', 'fontWeight':'var(--bs-body-font-weight)','lineHeight':'var(--bs-body-line-height)','whiteSpace': 'normal','height': 'auto'},
+                    style_data={'textAlign': 'left', 'fontWeight':'var(--bs-body-font-weight)','whiteSpace': 'normal','height': 'auto'},
 
+                    style_data_conditional=[                
+                            {
+                                "if": {"state": "selected"},              # 'active' | 'selected'
+                                "backgroundColor": '#FFF',
+                                "border": '1px solid rgba(0,0,0.5)',
+                            },
+            ]
                     )
                    
                 ])
@@ -140,7 +149,7 @@ def preview_data(corpus,alias,confirm):
 
                         id='tbl',
 
-                        css=[{
+                         css=[{
                             'selector': '.dash-spreadsheet td div',
                             'rule': '''
                                 line-height: 15px;
@@ -159,15 +168,23 @@ def preview_data(corpus,alias,confirm):
 
                     # tooltip_duration=None,
 
-                    style_cell={'font_family': 'var(--bs-body-font-family)','textAlign': 'left', 'fontSize':'var(--bs-body-font-size)', 'fontWeight':'var(--bs-body-font-weight)','lineHeight':'var(--bs-body-line-height)', 'padding':'.6em'},
+                    style_cell={'textAlign': 'left', 'lineHeight':'var(--bs-body-line-height)', 'padding':'.6em'},
 
-                    style_data={'font_family': 'var(--bs-body-font-family)','textAlign': 'left', 'fontSize':'var(--bs-body-font-size)', 'fontWeight':'var(--bs-body-font-weight)','lineHeight':'var(--bs-body-line-height)','whiteSpace': 'normal','height': 'auto'},
+                    style_data={'textAlign': 'left', 'fontWeight':'var(--bs-body-font-weight)','lineHeight':'var(--bs-body-line-height)','whiteSpace': 'normal','height': 'auto'},
 
+                    style_data_conditional=[                
+                            {
+                                "if": {"state": "selected"},              # 'active' | 'selected'
+                                "backgroundColor": '#FFF',
+                                "border": '1px solid rgba(0,0,0.5)',
+                            },
+            ]
+                    
                     )
                                 
                     #dbc.Table.from_dataframe(preview[1]) 
                     ]) 
-            return df_head, df_tail, 0
+            return alias, df_head, df_tail, 0
 
     else:
         raise PreventUpdate
