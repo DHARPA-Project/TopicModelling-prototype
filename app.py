@@ -3,9 +3,10 @@ import dash_labs as dl
 import dash_bootstrap_components as dbc
 from dash import html, Input, Output, State, dcc
 
+external_stylesheets = ["assets/styles.css", dbc.themes.FLATLY]
 
 app = dash.Dash(
-    __name__, plugins=[dl.plugins.pages], external_stylesheets=[dbc.themes.FLATLY], include_assets_files=False, suppress_callback_exceptions=True
+    __name__, plugins=[dl.plugins.pages], external_stylesheets=external_stylesheets, include_assets_files=False, suppress_callback_exceptions=True
     )
 
 # this won't be necessary at the moment
@@ -70,7 +71,7 @@ navbar = dbc.NavbarSimple(children=[
 
 
 app.layout = dbc.Container(
-    [navbar,dcc.Store(id="stored-data", data=None),dcc.Store(id="stored-subset", data=[]),dcc.Store(id="viz-data", data=[]),dcc.Store(id="viz-date", data=[]), dl.plugins.page_container],
+    [navbar,dcc.Store(id="stored-data", data=None),dcc.Store(id="initial-alias", data=None),dcc.Store(id="stored-subset", data=[]),dcc.Store(id="viz-data", data=[]),dcc.Store(id="viz-date", data=[]), dl.plugins.page_container]
 
 )
 
