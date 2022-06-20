@@ -3,7 +3,7 @@ import dash_labs as dl
 import dash_bootstrap_components as dbc
 from dash import html, Input, Output, State, dcc
 
-external_stylesheets = ["assets/styles.css", dbc.themes.FLATLY]
+external_stylesheets = ["assets/styles.css",dbc.themes.FLATLY]
 
 app = dash.Dash(
     __name__, plugins=[dl.plugins.pages], external_stylesheets=external_stylesheets, include_assets_files=False, suppress_callback_exceptions=True

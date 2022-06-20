@@ -4,11 +4,12 @@ from dash import dcc, html, Input, Output, callback, dash_table
 from dash.exceptions import PreventUpdate
 import time
 import pandas as pd
+import os
 from pyparsing import White
-from processing_steps.pr_step1 import dir_list
 from processing_steps.onboarding import onboard_df
 
 dash.register_page(__name__, path="/")
+
 
 layout = html.Div(children=[
     dbc.Card(
@@ -24,9 +25,10 @@ layout = html.Div(children=[
         , className="card-text"),
 
         html.Div(children=[
-            dcc.Dropdown(
-            [dir for dir in dir_list],
+        
+        dbc.Input(
             id = 'corpus-selection',
+            placeholder='Paste path to folder containing corpus',
             persistence=True,
             persistence_type='session',
         ),
