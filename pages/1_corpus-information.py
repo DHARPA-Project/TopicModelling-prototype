@@ -59,14 +59,16 @@ layout = html.Div(children=[
 tab1 = html.Div(id='corpus-selection-head')
 tab2 = html.Div(id='corpus-selection-tail')
 
-corpus_result = html.Div(children=[
+corpus_result = dcc.Loading(children=[
         html.Div(id='corpus-selection-info'),
         dbc.Tabs(
         [
         dbc.Tab(tab1, label="Dataset head", label_style={"color": "#2c3e50"}),
         dbc.Tab(tab2, label="Dataset tail", label_style={"color": "#2c3e50"})
         ]),       
-])
+],
+        type="default",
+        color='grey')
 
 
 @callback(
