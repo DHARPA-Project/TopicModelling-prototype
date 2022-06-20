@@ -98,8 +98,6 @@ def preview_data(corpus,alias,confirm):
             preview = onboard_df(corpus,alias)
 
             df_head = html.Div(children=[
-                html.H5("Dataset preview - head"
-            , className="card-title", style={'padding-top':'1em'}),
                 dash_table.DataTable(
 
                         preview[0].to_dict('records'),
@@ -130,7 +128,6 @@ def preview_data(corpus,alias,confirm):
                     style_cell={'textAlign': 'left','lineHeight':'var(--bs-body-line-height)', 'padding':'.6em'},
 
                     style_data={'textAlign': 'left', 'fontWeight':'var(--bs-body-font-weight)','whiteSpace': 'normal','height': 'auto'},
-
                     style_data_conditional=[                
                             {
                                 "if": {"state": "selected"},              # 'active' | 'selected'
@@ -142,8 +139,6 @@ def preview_data(corpus,alias,confirm):
                    
                 ])
             df_tail = html.Div(children=[
-                    html.H5("Dataset preview - tail"
-                , className="card-title", style={'padding-top':'1em'}),
                     
                     dash_table.DataTable(
 
