@@ -6,7 +6,7 @@ from dash import html, Input, Output, State, dcc
 external_stylesheets = [dbc.themes.FLATLY]
 
 app = dash.Dash(
-    __name__, plugins=[dl.plugins.pages], external_stylesheets=external_stylesheets, suppress_callback_exceptions=True, assets_ignore='.*visualizations.*'
+    __name__, plugins=[dl.plugins.pages], external_stylesheets=external_stylesheets, suppress_callback_exceptions=True, assets_ignore='.*.js'
     )
 
 # this won't be necessary at the moment
