@@ -15,10 +15,7 @@ layout = html.Div(children=[
     dbc.Card(
     dbc.CardBody(
         children=[html.Div(children=[
-            html.P("Prior to running this workflow, a corpus needs to be added in a 'datasets' folder located at the root of the 'TopicModelling-prototype' repository."
-        , className="card-text"),
-
-        html.P("Inside the repository, one or more subfolders representing titles/publications need to contain text files named with the following convention: LCCN title information and publication date (yyyy-mm-dd), like for example: '/sn86069873/1900-01-05/'."
+        html.P("For this workflow to work, please prepare a folder with one or more subfolders representing titles/publications. The subfolder(s) need to contain text files named with the following convention: LCCN title information and publication date (yyyy-mm-dd), like so: '/sn86069873/1900-01-05/'."
         , className="card-text"),
         
         html.P("Onboard corpus into Kiara"
