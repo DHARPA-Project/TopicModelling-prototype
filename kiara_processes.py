@@ -3,6 +3,25 @@ from kiara import Kiara
 from kiara.interfaces.python_api.operation import KiaraOperation
 
 
+
+def get_table_preview(alias):
+
+    kiara = Kiara.instance()
+
+    table_value = kiara.data_registry.get_value(f'alias:{alias}')
+
+    if not table_value:
+        return ('Table not found')
+    
+    else:
+        table_obj = table_value.data
+        # see query table module
+        arrow_table = table_obj.arrow_table
+        df = arrow_table.to_pandas()
+
+        return df.head(), df.tail(), df.columns.values.tolist()
+
+
 def onboard_df(corpus,alias):
     
     kiara = Kiara.instance()
@@ -49,15 +68,41 @@ def onboard_df(corpus,alias):
     table_value = kiara.data_registry.get_value(f'alias:{alias}')
 
     if not table_value:
-        print('Table not found')
         return ('Table not found')
     
     else:
-        print('ok table')
-        table_obj = table_value.data
-        arrow_table = table_obj.arrow_table
-        df = arrow_table.to_pandas()
+        # table_obj = table_value.data
+        # arrow_table = table_obj.arrow_table
+        # df = arrow_table.to_pandas()
 
-        return df.head(), df.tail()
+        return get_table_preview(alias)
+
+
+def extract_metadata(alias,column):
+
+    print('hello')
+    print('*************************************')
+    print('*************************************')
+    
+    kiara = Kiara.instance()
+
+    augmented_table = KiaraOperation(kiara=kiara, operation_name="kiara_plugin.playground.playground.mariella.file_name_metadata")
+    inputs = {'table_input': f"alias:{alias}", 'column_name':column}
+    job_id = augmented_table.queue_job(**inputs)
+    
+    try:
+        augmented_table.save_result(
+        job_id=job_id, aliases={"table_output": 'tm_metadata', 'publication_ref':'pub_refs','publication_counts':'pub_count'}
+        )
+        
+
+    except Exception as e:
+        print(e)
+        pass
+        
+
+    return get_table_preview('tm_metadata')
+
+
 
 

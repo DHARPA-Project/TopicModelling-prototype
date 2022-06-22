@@ -3,8 +3,10 @@ body {
     font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif !important;
 }
 
-.cell-table {
+.cell-table, .dash-cell {
     font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif !important;
     font-size: .8em;
     line-height: 2px;
+    white-space: 'normal';
+    height: 'auto';
 }

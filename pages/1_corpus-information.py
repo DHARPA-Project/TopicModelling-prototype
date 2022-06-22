@@ -6,7 +6,8 @@ import time
 import pandas as pd
 import os
 from pyparsing import White
-from processing_steps.onboarding import onboard_df
+from kiara_processes import onboard_df
+from ui_custom import table
 
 dash.register_page(__name__, path="/")
 
@@ -15,7 +16,7 @@ layout = html.Div(children=[
     dbc.Card(
     dbc.CardBody(
         children=[html.Div(children=[
-        html.P("For this workflow to work, please prepare a folder with one or more subfolders representing titles/publications. The subfolder(s) need to contain text files named with the following convention: LCCN title information and publication date (yyyy-mm-dd), like so: '/sn86069873/1900-01-05/'."
+        html.P("Please prepare a folder with one or more subfolders representing titles/publications for your corpus, and copy/paste the path to this folder below."
         , className="card-text"),
         
         html.P("Onboard corpus into Kiara"
@@ -41,7 +42,7 @@ layout = html.Div(children=[
 
         ], style={"width":"40%"}),
 
-         html.Br(),
+        html.Br(),
 
         # html.P(id='selected-corpus'),
 
@@ -91,127 +92,11 @@ def display_corpus(corpus,alias,confirm):
 def preview_data(corpus,alias,confirm):
     if confirm>0:
         if corpus and alias:
-
             preview = onboard_df(corpus,alias)
-
-            df_head = html.Div(children=[
-                dash_table.DataTable(
-
-                        preview[0].to_dict('records'),
-
-                        [{"name": i, "id": i} for i in preview[0].columns],
-
-                        id='tbl1',
-
-                        css=[{
-                            'selector': '.dash-spreadsheet td div',
-                            'rule': '''
-                                line-height: 15px;
-                                max-height: 50px; min-height: 50px; height: 50px;
-                                display: block;
-                                overflow-y: scroll;
-                            '''
-                        }],
-
-                    #     tooltip_data=[
-                    #         {
-                    #         column: {'value': str(value), 'type': 'markdown'}
-                    #         for column, value in row.items()
-                    #         } for row in preview[1].to_dict('records')
-                    #     ],
-
-                    # tooltip_duration=None,
-
-                    style_cell={'textAlign': 'left','lineHeight':'var(--bs-body-line-height)', 'padding':'.6em'},
-
-                    style_data={'textAlign': 'left', 'fontWeight':'var(--bs-body-font-weight)','whiteSpace': 'normal','height': 'auto'},
-                    style_data_conditional=[                
-                            {
-                                "if": {"state": "selected"},              # 'active' | 'selected'
-                                "backgroundColor": '#FFF',
-                                "border": '1px solid rgba(0,0,0.5)',
-                            },
-            ]
-                    )
-                   
-                ])
-            df_tail = html.Div(children=[
-                    
-                    dash_table.DataTable(
-
-                        preview[1].to_dict('records'),
-
-                        [{"name": i, "id": i} for i in preview[1].columns],
-
-                        id='tbl',
-
-                         css=[{
-                            'selector': '.dash-spreadsheet td div',
-                            'rule': '''
-                                line-height: 15px;
-                                max-height: 50px; min-height: 50px; height: 50px;
-                                display: block;
-                                overflow-y: scroll;
-                            '''
-                        }],
-
-                    #     tooltip_data=[
-                    #         {
-                    #         column: {'value': str(value), 'type': 'markdown'}
-                    #         for column, value in row.items()
-                    #         } for row in preview[1].to_dict('records')
-                    #     ],
-
-                    # tooltip_duration=None,
-
-                    style_cell={'textAlign': 'left', 'lineHeight':'var(--bs-body-line-height)', 'padding':'.6em'},
-
-                    style_data={'textAlign': 'left', 'fontWeight':'var(--bs-body-font-weight)','lineHeight':'var(--bs-body-line-height)','whiteSpace': 'normal','height': 'auto'},
-
-                    style_data_conditional=[                
-                            {
-                                "if": {"state": "selected"},              # 'active' | 'selected'
-                                "backgroundColor": '#FFF',
-                                "border": '1px solid rgba(0,0,0.5)',
-                            },
-            ]
-                    
-                    )
-                                
-                    #dbc.Table.from_dataframe(preview[1]) 
-                    ]) 
+            df_head = table.create_table(preview[0])
+            df_tail = table.create_table(preview[1])
+            
             return alias, df_head, df_tail, 0
 
     else:
         raise PreventUpdate
-
-
-# @callback(
-#     Output('corpus-selection-head','children'),
-#     Output('corpus-selection-tail','children'),
-#     Output('confirm-selection','n_clicks'),
-#     #Input('corpus-selection','value'),
-#     #Input('corpus-alias','value'),
-#     Input('confirm-selection', 'n_clicks')
-# )
-# def preview_data(confirm):
-#     print(confirm)
-#     if confirm>0:
-#         print('hello')
-#         return ' ', ' ',0
-        # if corpus and alias:
-            
-        #     preview = onboard_df(corpus,alias)
-
-        #     df_head = html.Div(children=[
-        #         html.H5("Dataset preview - head"
-        #     , className="card-title", style={'padding-top':'1em'}),
-        #         dbc.Table.from_dataframe(preview[0]) 
-        #         ])
-        #     df_tail = html.Div(children=[
-        #             html.H5("Dataset preview - tail"
-        #         , className="card-title", style={'padding-top':'1em'}),
-        #             dbc.Table.from_dataframe(preview[1]) 
-        #             ]) 
-        #     return df_head, df_tail, 0
-
