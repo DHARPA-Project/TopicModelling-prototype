@@ -79,10 +79,6 @@ def onboard_df(corpus,alias):
 
 
 def extract_metadata(alias,column):
-
-    print('hello')
-    print('*************************************')
-    print('*************************************')
     
     kiara = Kiara.instance()
 

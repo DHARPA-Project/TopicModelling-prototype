@@ -49,23 +49,26 @@ def get_metadata(extract,alias):
             preview,
             html.Br(),
             html.H5('Select the column that contains the file names'),
-            dcc.Dropdown(columns, id='col-sel')
+            dcc.Dropdown(columns, id='col-sel'),
+            html.Br(),
+            dbc.Button("Confirm", color="light", id='confirm-col', className="me-1", n_clicks=0),
         ]) 
         return ui_el
 
 @callback(
     Output('augmented-table','children'),
     [Input('col-sel', 'value'),
-    Input('initial-alias','data')]
+    Input('initial-alias','data'),
+    Input('confirm-col', 'n_clicks')]
 )
-def augment_table(col,data):
-    if col and data:
+def augment_table(col,data,confirm):
+    if col and data and confirm>0:
         result = extract_metadata(data,col)
         if result:
         
             ui_el = html.Div(children=[
                 html.Br(),
-                html.H5('Data preview'),
+                html.H5('Augmented table preview'),
                 table.create_table(result[0]),
                 html.Br(),
                 
