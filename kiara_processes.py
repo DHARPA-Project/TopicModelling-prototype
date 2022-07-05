@@ -82,13 +82,16 @@ def extract_metadata(alias,column):
     
     kiara = Kiara.instance()
 
+    output_alias = 'tm_metadata'
+
+
     augmented_table = KiaraOperation(kiara=kiara, operation_name="kiara_plugin.playground.playground.mariella.file_name_metadata")
     inputs = {'table_input': f"alias:{alias}", 'column_name':column}
     job_id = augmented_table.queue_job(**inputs)
     
     try:
         augmented_table.save_result(
-        job_id=job_id, aliases={"table_output": 'tm_metadata', 'publication_ref':'pub_refs','publication_counts':'pub_count'}
+        job_id=job_id, aliases={"table_output": output_alias, 'publication_ref':'pub_refs','publication_counts':'pub_count'}
         )
         
 
@@ -97,7 +100,46 @@ def extract_metadata(alias,column):
         pass
         
 
-    return get_table_preview('tm_metadata')
+    return get_table_preview('tm_metadata'), output_alias
+
+
+def timestamped_corpus_data(alias):
+    
+    kiara = Kiara.instance()
+
+    #sql_query_month = "SELECT strptime(concat('01/', month, '/', year), '%d/%m/%Y') as date, pub_name, count FROM (SELECT YEAR(date) as year, MONTH(date) as month, pub_name, count(*) as count FROM data group by YEAR(date), MONTH(date), pub_name ORDER BY year, month, pub_name) AS agg"
+
+    agg_table = KiaraOperation(kiara=kiara, operation_name="query.table")
+    inputs = {'table': f"alias:{alias}", 'query':"SELECT strptime(concat('01/', month, '/', year), '%d/%m/%Y') as date, publication as publication_name, count FROm (SELECT YEAR(date) as year, MONTH(date) as month, publication, count(*) as count FROM data GROUP BY publication, YEAR(date), MONTH(date))"}
+
+    job_id = agg_table.queue_job(**inputs)
+
+    try:
+        agg_table.save_result(
+        job_id=job_id, aliases={"query_result": 'viz_data_tm'}
+        )  
+
+        table_value = kiara.data_registry.get_value(f'alias:viz_data_tm')
+        table_obj = table_value.data
+
+        # see query table module
+        arrow_table = table_obj.arrow_table
+        df = arrow_table.to_pandas()
+        print(df)
+        print(df.info())
+
+        return df
+
+    except Exception as e:
+        print('this thing did not work')
+        print(e)
+        pass
+
+
+
+
+
+
 
 
 

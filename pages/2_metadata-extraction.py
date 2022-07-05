@@ -57,6 +57,7 @@ def get_metadata(extract,alias):
 
 @callback(
     Output('augmented-table','children'),
+    Output('augmented-data-alias','data'),
     [Input('col-sel', 'value'),
     Input('initial-alias','data'),
     Input('confirm-col', 'n_clicks')]
@@ -69,14 +70,15 @@ def augment_table(col,data,confirm):
             ui_el = html.Div(children=[
                 html.Br(),
                 html.H5('Augmented table preview'),
-                table.create_table(result[0]),
+                table.create_table(result[0][0]),
                 html.Br(),
+                dbc.Button('Use augmented table for next step', n_clicks=0, color="light", id='confirm-augment', className="me-1",),
                 
             ]) 
 
-            return ui_el
+            return ui_el, result[1]
         else:
-            return html.Div('no table found')
+            return html.Div('no table found'), None
     else:
         raise PreventUpdate
     
