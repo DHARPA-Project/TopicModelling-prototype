@@ -10,3 +10,7 @@ body {
     white-space: 'normal';
     height: 'auto';
 }
+
+.input-group {
+    padding-bottom: 1em;
+}

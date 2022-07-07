@@ -1,7 +1,7 @@
 import dash 
 import dash_bootstrap_components as dbc
 from dash import dcc, html, Input, Output, callback, dash_table
-from kiara_processes import get_table_preview, extract_metadata
+from kiara_processes import get_table_preview, extract_metadata, get_col_unique_values
 from dash.exceptions import PreventUpdate
 from ui_custom import table
 
@@ -26,7 +26,16 @@ layout = dbc.Card(children=[
         ),
         html.Br(),
         html.Div(id='col-selection', children=[]),
-        html.Div(id='augmented-table', children=[])
+        html.Div(id='augmented-table', children=[]),
+        html.Br(),
+        html.Div(id='publication_name'),
+        html.Br(),
+        html.Div(id='pub_mapping'),
+        html.Br(),
+        html.Div(id='mapping_el', style={"maxWidth":"60%"}),
+        html.Br(),
+        html.Div(id='augmented-table-2'),
+
     ]
 )
 
@@ -45,10 +54,10 @@ def get_metadata(extract,alias):
         
         ui_el = html.Div(children=[
             html.Br(),
-            html.H5('Data preview'),
+            html.P('Data preview'),
             preview,
             html.Br(),
-            html.H5('Select the column that contains the file names'),
+            html.P('Select the column that contains the file names'),
             dcc.Dropdown(columns, id='col-sel'),
             html.Br(),
             dbc.Button("Confirm", color="light", id='confirm-col', className="me-1", n_clicks=0),
@@ -58,6 +67,7 @@ def get_metadata(extract,alias):
 @callback(
     Output('augmented-table','children'),
     Output('augmented-data-alias','data'),
+    Output('publication_name','children'),
     [Input('col-sel', 'value'),
     Input('initial-alias','data'),
     Input('confirm-col', 'n_clicks')]
@@ -69,16 +79,86 @@ def augment_table(col,data,confirm):
         
             ui_el = html.Div(children=[
                 html.Br(),
-                html.H5('Augmented table preview'),
+                html.P('Augmented table preview'),
                 table.create_table(result[0][0]),
                 html.Br(),
-                dbc.Button('Use augmented table for next step', n_clicks=0, color="light", id='confirm-augment', className="me-1",),
+                #dbc.Button('Use augmented table for next step', n_clicks=0, color="light", id='confirm-augment', className="me-1",),
                 
             ]) 
 
-            return ui_el, result[1]
+            pub_name = html.Div(children=[dbc.Label("Map publication references with names?"),
+                dbc.RadioItems(
+                    options=[
+                        {"label": "yes", "value": 1},
+                        {"label": "no", "value": 2},
+                    ],
+                    value=None,
+                    id="map_pub",
+                    inline=True,
+                ),])
+
+            return ui_el, result[1], pub_name
         else:
             return html.Div('no table found'), None
     else:
         raise PreventUpdate
+
+
+@callback(
+    Output('pub_mapping','children'),
+    Input('map_pub', 'value'),
+    Input('augmented-data-alias','data'),
+)
+def map_pub_name(map,alias):
+
+    if map == 1:
+        columns = get_table_preview(alias)[2]
+        pub_mapping = html.Div(children=[
+            html.P('Select the column that contains publication references'),
+            dcc.Dropdown(columns, id='pub_sel'),
+            html.Br(),
+            dbc.Button("Confirm", color="light", id='confirm-pub', className="me-1", n_clicks=0)
+        ])
+        return pub_mapping
+    else:
+        raise PreventUpdate
+
+@callback(
+    Output('mapping_el','children'),
+    Input('pub_sel','value'),
+    Input('augmented-data-alias','data'),
+    Input('confirm-pub','n_clicks'),
+)
+def get_ref_tomap(col,alias,confirm):
+    
+    if col and alias and confirm > 0:
+
+        cols =  get_col_unique_values(alias,col)
+        input_group = []
+
+        for idx, col in enumerate(cols):
+            input = dbc.InputGroup([dbc.InputGroupText(col), dbc.Input(id=f"pub_name_idx"), html.Br()])
+            input_group.append(input)
+        
+        input_group.append(html.Br())
+        input_group.append(dbc.Button("Add publication names", color="light", id='confirm-pub_name', className="me-1", n_clicks=0))
+
+        ui_input = html.Div(children = input_group)
+       
+        return ui_input
+
+    else:
+        raise PreventUpdate
+
+
+#WIP need to check dash pattern matching callback to retrieve all inputs for publications names
+# @callback(
+#     Output('augmented-table-2', 'children'),
+#     Input('confirm-pub-name', 'n_clicks'),
+#     Input(),
+# )
+# def display_augmented_table():
+
+
+
     
