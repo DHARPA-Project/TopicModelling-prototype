@@ -135,7 +135,7 @@ Input('augmented-data-alias','data'),
 Input('augmented-data2-alias','data'),
 )
 def output_viz(alias,alias2):
-    viz_data = timestamped_corpus_data(alias2 if alias2 is not None else alias)
+    viz_data = timestamped_corpus_data(alias2 if alias2 is not None else alias, 'publication_name' if alias2 is not None else 'publication')
     viz_data['agg'] = 'month'
     viz_data = viz_data.astype(str)
    

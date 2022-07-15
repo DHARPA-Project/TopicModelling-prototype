@@ -170,7 +170,7 @@ def display_augmented_table(confirm, names, col, alias, confirm_pub):
         # publication names
         pub_names = names
 
-        augmented_table = map_pub_ids(alias,col,'publication_names',[pub_ids,pub_names])
+        augmented_table = map_pub_ids(alias,col,'publication_name',[pub_ids,pub_names])
 
         df_head = table.create_table(augmented_table[0][0])
         df_alias = augmented_table[1]

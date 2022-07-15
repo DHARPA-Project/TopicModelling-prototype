@@ -96,12 +96,12 @@ def extract_metadata(alias,column):
 # prepare data for the timestamped corpus viz
 # this will need a bit of reworking since it would probably make more sense to directly 
 # have data transformed into json instead of df
-def timestamped_corpus_data(alias):
+def timestamped_corpus_data(alias,col):
     
     kiara = Kiara.instance()
 
     agg_table = KiaraOperation(kiara=kiara, operation_name="query.table")
-    inputs = {'table': f"alias:{alias}", 'query':"SELECT strptime(concat('01/', month, '/', year), '%d/%m/%Y') as date, publication as publication_name, count FROm (SELECT YEAR(date) as year, MONTH(date) as month, publication, count(*) as count FROM data GROUP BY publication, YEAR(date), MONTH(date))"}
+    inputs = {'table': f"alias:{alias}", 'query':f"SELECT strptime(concat('01/', month, '/', year), '%d/%m/%Y') as date, {col} as publication_name, count FROm (SELECT YEAR(date) as year, MONTH(date) as month, {col}, count(*) as count FROM data GROUP BY {col}, YEAR(date), MONTH(date))"}
 
     job_id = agg_table.queue_job(**inputs)
 
@@ -156,13 +156,4 @@ def map_pub_ids(alias,col1,col2,replace):
         pass
 
     return [get_table_preview('tm_publication_names'), 'tm_publication_names']
-
-
-
-
-
-
-
-
-
 
