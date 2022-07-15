@@ -53,6 +53,7 @@ def onboard_df(corpus,alias):
         )
 
     except Exception as e:
+        print('nope')
         print(e)
         pass
 
@@ -68,6 +69,9 @@ def onboard_df(corpus,alias):
 
 # get metadata from corpus file names and augment table
 def extract_metadata(alias,column):
+
+    # table.cut_column
+    # parse.date_array
     
     kiara = Kiara.instance()
 
@@ -132,6 +136,27 @@ def get_col_unique_values(alias,col):
     unique_val = column.unique().tolist()
 
     return unique_val
+
+# augment table with mapped publication ids to publication names
+def map_pub_ids(alias,col1,col2,replace):
+    
+    kiara = Kiara.instance()
+
+    augmented_table = KiaraOperation(kiara=kiara, operation_name="kiara_plugin.playground.playground.mariella.map_column")
+    inputs = {'table_input': f"alias:{alias}", 'column_name':col1, 'mapping_keys':replace, 'output_col_name':col2}
+    job_id = augmented_table.queue_job(**inputs)
+    
+    try:
+        augmented_table.save_result(
+        job_id=job_id, aliases={"table_output": 'tm_publication_names'}
+        )
+
+    except Exception as e:
+        print(e)
+        pass
+
+    return [get_table_preview('tm_publication_names'), 'tm_publication_names']
+
 
 
 

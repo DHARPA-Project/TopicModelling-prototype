@@ -1,7 +1,7 @@
 import dash 
 import dash_bootstrap_components as dbc
-from dash import dcc, html, Input, Output, callback, dash_table
-from kiara_processes import get_table_preview, extract_metadata, get_col_unique_values
+from dash import dcc, html, Input, Output, callback, dash_table, ALL
+from kiara_processes import get_table_preview, extract_metadata, get_col_unique_values, map_pub_ids
 from dash.exceptions import PreventUpdate
 from ui_custom import table
 
@@ -137,11 +137,11 @@ def get_ref_tomap(col,alias,confirm):
         input_group = []
 
         for idx, col in enumerate(cols):
-            input = dbc.InputGroup([dbc.InputGroupText(col), dbc.Input(id=f"pub_name_idx"), html.Br()])
+            input = dbc.InputGroup([dbc.InputGroupText(col), dbc.Input(id={"index": idx, "type": "pub_name"},), html.Br()])
             input_group.append(input)
         
         input_group.append(html.Br())
-        input_group.append(dbc.Button("Add publication names", color="light", id='confirm-pub_name', className="me-1", n_clicks=0))
+        input_group.append(dbc.Button("Add publication names", color="light", id='confirm-pub-name', className="me-1", n_clicks=0))
 
         ui_input = html.Div(children = input_group)
        
@@ -151,13 +151,34 @@ def get_ref_tomap(col,alias,confirm):
         raise PreventUpdate
 
 
-#WIP need to check dash pattern matching callback to retrieve all inputs for publications names
-# @callback(
-#     Output('augmented-table-2', 'children'),
-#     Input('confirm-pub-name', 'n_clicks'),
-#     Input(),
-# )
-# def display_augmented_table():
+
+@callback(
+    Output('augmented-table-2', 'children'),
+    Output('augmented-data2-alias','data'),
+    Input('confirm-pub-name', 'n_clicks'),
+    Input({'type': 'pub_name', 'index': ALL}, "value"),
+    Input('pub_sel','value'), # pub indexes
+    Input('augmented-data-alias','data'),
+    Input('confirm-pub','n_clicks'),
+)
+def display_augmented_table(confirm, names, col, alias, confirm_pub):
+    
+    if names and confirm > 0 and confirm_pub > 0:
+        # ids to map with names
+        pub_ids =  get_col_unique_values(alias,col)
+        
+        # publication names
+        pub_names = names
+
+        augmented_table = map_pub_ids(alias,col,'publication_names',[pub_ids,pub_names])
+
+        df_head = table.create_table(augmented_table[0][0])
+        df_alias = augmented_table[1]
+        
+        return df_head, df_alias
+    
+    else:
+        raise PreventUpdate
 
 
 

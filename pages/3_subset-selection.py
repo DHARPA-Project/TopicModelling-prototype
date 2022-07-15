@@ -132,13 +132,14 @@ layout = html.Div(children=[
 @callback(
 Output("corpus-selection-viz", "children"),
 Input('augmented-data-alias','data'),
+Input('augmented-data2-alias','data'),
 )
-def output_viz(alias):
-    viz_data = timestamped_corpus_data(alias)
+def output_viz(alias,alias2):
+    viz_data = timestamped_corpus_data(alias2 if alias2 is not None else alias)
     viz_data['agg'] = 'month'
     viz_data = viz_data.astype(str)
    
-    print(viz_data.info())
+    # print(viz_data.info())
     
     color = "blue"
     height= 130 + len(viz_data['publication_name'].unique())*23

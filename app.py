@@ -71,7 +71,7 @@ navbar = dbc.NavbarSimple(children=[
 
 
 app.layout = dbc.Container(
-    [navbar,dcc.Store(id="stored-data", data=None),dcc.Store(id="initial-alias", data=None),dcc.Store(id="augmented-data-alias", data=None),dcc.Store(id="stored-subset", data=[]),dcc.Store(id="viz-data", data=[]),dcc.Store(id="viz-date", data=[]), dl.plugins.page_container]
+    [navbar,dcc.Store(id="stored-data", data=None),dcc.Store(id="initial-alias", data=None),dcc.Store(id="augmented-data-alias", data=None),dcc.Store(id="augmented-data2-alias", data=None),dcc.Store(id="stored-subset", data=[]),dcc.Store(id="viz-data", data=[]),dcc.Store(id="viz-date", data=[]), dl.plugins.page_container]
 
 )
 
