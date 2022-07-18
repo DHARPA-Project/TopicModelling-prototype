@@ -131,28 +131,57 @@ layout = html.Div(children=[
 
 @callback(
 Output("corpus-selection-viz", "children"),
+Output("viz-data", "data"),
+Output("datatable-advanced-filtering", "data"),
+Output("datatable-advanced-filtering", "columns"),
+Output('reset-data','n_clicks'),
 Input('augmented-data-alias','data'),
 Input('augmented-data2-alias','data'),
+Input('select-color','value'),
+Input('select-scale','value'),
+Input('select-agg','value'),
+Input('reset-data','n_clicks')
 )
-def output_viz(alias,alias2):
-    viz_data = timestamped_corpus_data(alias2 if alias2 is not None else alias, 'publication_name' if alias2 is not None else 'publication')
-    viz_data['agg'] = 'month'
-    viz_data = viz_data.astype(str)
-   
-    # print(viz_data.info())
+def output_viz(alias,alias2,color,scale,agg,reset):
     
-    color = "blue"
+    viz_data = timestamped_corpus_data(alias2 if alias2 is not None else alias, 'publication_name' if alias2 is not None else 'publication', agg or 'month')
+    
+    viz_data['agg'] = agg or 'month'
+
+    viz_data = viz_data.astype(str)
+
+    table_columns = [{"name":i, "id": i} for i in viz_data.columns]
+
     height= 130 + len(viz_data['publication_name'].unique())*23
-    scale = 'color'
-    agg = 'month'
 
     viz_data = viz_data.to_dict('records')
+
+    # if reset>0:
+    #     viz_df = pd.DataFrame.from_dict(viz_data)
+    #     viz_data = viz_df.to_dict('records')
     
     viz = html.Div(children=[
         create_viz_step1(viz_data, color or 'blue',height, scale or 'color',agg or 'month'),
         ])
     
-    return viz
+    return viz, viz_data, viz_data, table_columns, 0
+
+
+# @callback(
+# Output("corpus-selection-viz", "children"),
+# Output("datatable-advanced-filtering", "data"),
+# Output("datatable-advanced-filtering", "columns"),
+# Output("viz-data", "data"),
+# Output('reset-data','n_clicks'),
+# [Input('stored-data','data'),
+# Input('select-color', 'value'),
+# Input('select-scale', 'value'),
+# Input('select-agg', 'value'),
+# Input('datatable-advanced-filtering', 'derived_virtual_data'),
+# Input('reset-data','n_clicks')
+# ])
+# def output_text(data,color,scale,agg,table,reset):
+#     return " "
 
 
 
