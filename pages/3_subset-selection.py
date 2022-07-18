@@ -140,13 +140,22 @@ Input('augmented-data2-alias','data'),
 Input('select-color','value'),
 Input('select-scale','value'),
 Input('select-agg','value'),
+Input('datatable-advanced-filtering', 'derived_virtual_data'),
 Input('reset-data','n_clicks')
 )
-def output_viz(alias,alias2,color,scale,agg,reset):
+def output_viz(alias,alias2,color,scale,agg,table,reset):
     
     viz_data = timestamped_corpus_data(alias2 if alias2 is not None else alias, 'publication_name' if alias2 is not None else 'publication', agg or 'month')
     
     viz_data['agg'] = agg or 'month'
+
+    if reset > 0:
+        table = None
+
+    if table is not None:
+        if (len(table) > 0) and (len(table) < len(viz_data)):      
+            viz_data = pd.DataFrame.from_records(table)
+            viz_data = viz_data[viz_data['agg'] == (agg or 'month')]
 
     viz_data = viz_data.astype(str)
 
@@ -166,110 +175,39 @@ def output_viz(alias,alias2,color,scale,agg,reset):
     
     return viz, viz_data, viz_data, table_columns, 0
 
-
-# @callback(
-# Output("corpus-selection-viz", "children"),
-# Output("datatable-advanced-filtering", "data"),
-# Output("datatable-advanced-filtering", "columns"),
-# Output("viz-data", "data"),
-# Output('reset-data','n_clicks'),
-# [Input('stored-data','data'),
-# Input('select-color', 'value'),
-# Input('select-scale', 'value'),
-# Input('select-agg', 'value'),
-# Input('datatable-advanced-filtering', 'derived_virtual_data'),
-# Input('reset-data','n_clicks')
-# ])
-# def output_text(data,color,scale,agg,table,reset):
-#     return " "
-
-
-
-# @callback(
-# Output("corpus-selection-viz", "children"),
-# Output("datatable-advanced-filtering", "data"),
-# Output("datatable-advanced-filtering", "columns"),
-# Output("viz-data", "data"),
-# Output('reset-data','n_clicks'),
-# [Input('stored-data','data'),
-# Input('select-color', 'value'),
-# Input('select-scale', 'value'),
-# Input('select-agg', 'value'),
-# Input('datatable-advanced-filtering', 'derived_virtual_data'),
-# Input('reset-data','n_clicks')
-# ])
-# def output_text(data,color,scale,agg,table,reset):
-#     if data:
-#         viz_df = pd.DataFrame.from_dict(data['viz-data'])
-
-#         viz_df = viz_df[viz_df['agg'] == (agg or 'month')]
-
-#         if table is not None:
-#             if (len(table) > 0) and (len(table) < len(viz_df)):      
-#                 viz_df = pd.DataFrame.from_records(table)
-#                 viz_df = viz_df[viz_df['agg'] == (agg or 'month')]
-
-
-#         viz_data = viz_df.to_dict('records')
-        
-#         if reset>0:
-#             viz_df = pd.DataFrame.from_dict(data['viz-data'])
-#             viz_data = viz_df.to_dict('records')
-
-#         height = 130 + len(viz_df['publication_name'].unique())*23
-            
-#         viz = html.Div(children=[
-#                 create_viz_step1(viz_data, color or 'blue',height, scale or 'color',agg or 'month'),
-#                 ])
-
-#         table_columns = [{"name":i, "id": i} for i in viz_df.columns]
-
-
-#         output = viz, viz_data, table_columns, viz_data, 0
-        
-#         return output
-
-#     else:
-#         raise PreventUpdate
-
-# @callback(
-#     Output("collapse", "is_open"),
-#     [Input("collapse-button", "n_clicks"),
-#     Input("subset-button", "n_clicks")],
-#     [State("collapse", "is_open")],
-# )
-# def toggle_collapse(n, n2, is_open):
-#     if n or n2:
-#         return not is_open
-#     return is_open
     
 
-# @callback(  
-# Output("viz-data-display", "children"),
-# Output('confirm-date','n_clicks'),
-# [Input('confirm-date',"n_clicks"),
-# Input("viz-date", "data"),
-# Input('viz-data','data'),
-# Input('select-agg', 'value'),
-# ])
-# def display_viz_data(clicks,dvalue,data,agg):
-#     if clicks > 0:
-#         agg_level = agg or 'month'
-#         viz_df = pd.DataFrame.from_dict(data)
-#         date = dvalue.split(',')
-#         print(date)
-#         year = date[0]
-#         month = date[1] if len(date[1]) > 1 else f"0{date[1]}"
-#         day = date[2]
+@callback(  
+Output("viz-data-display", "children"),
+Output('confirm-date','n_clicks'),
+[Input('confirm-date',"n_clicks"),
+Input("viz-date", "data"),
+Input('viz-data','data'),
+Input('select-agg', 'value'),
+])
+def display_viz_data(clicks,dvalue,viz_data,agg):
+    
+    if clicks > 0:
+        viz_df = pd.DataFrame.from_records(viz_data)
+
+        date = dvalue.split(',')
+        year = date[0]
+        month = date[1] if len(date[1]) > 1 else f"0{date[1]}"
+        day = date[2]
         
-#         #if agg_level == 'month':
-#         data_tab = viz_df[viz_df['date'].apply(lambda x: x.startswith(f"{year}-{month}-")) ]
-#         print(data_tab.head())
+        if agg == 'month':
+            data_tab = viz_df[viz_df['date'].apply(lambda x: x.startswith(f"{year}-{month}-")) ]
         
-#         tab = dbc.Table.from_dataframe(data_tab)
+        if agg == 'year':
+            data_tab = viz_df[viz_df['date'].apply(lambda x: x.startswith(f"{year}-")) ]
+        
+        if agg == 'day':
+            data_tab = viz_df[viz_df['date'].apply(lambda x: x.startswith(f"{year}-{month}-{day}")) ]
+        
+        tab = dbc.Table.from_dataframe(data_tab)
 
         
-#         return tab,0
+        return tab,0
         
         
         
