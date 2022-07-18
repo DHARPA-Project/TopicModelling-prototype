@@ -208,45 +208,53 @@ def display_viz_data(clicks,dvalue,viz_data,agg):
 
         
         return tab,0
-        
-        
-        
-
-        
 
 
-# @callback(
-# Output("stored-subset", "data"),
-# Output("subset-button", "n_clicks"),
-# [Input("subset-button", "n_clicks"),
-# Input("subset-alias", "value"),
-# Input('datatable-advanced-filtering', 'derived_virtual_data'),
-# Input("stored-subset","data")
-# ])
-# def display_viz_data(subset_click,alias,data,prev_data):
-#     if (subset_click >0) and (len(data)>0) and alias is not None :
-#         if len(prev_data) == 0:
-#             return [{'alias': alias, 'data': data}], 0
-#         else:
-#             subsets = prev_data
-#             subsets.append({'alias': alias, 'data': data})
-#             return subsets, 0
+@callback(
+    Output("collapse", "is_open"),
+    [Input("collapse-button", "n_clicks"),
+    Input("subset-button", "n_clicks")],
+    [State("collapse", "is_open")],
+)
+def toggle_collapse(n, n2, is_open):
+    if n or n2:
+        return not is_open
+    return is_open
+        
+
+@callback(
+Output("stored-subset", "data"),
+Output("subset-button", "n_clicks"),
+[Input("subset-button", "n_clicks"),
+Input("subset-alias", "value"),
+Input('datatable-advanced-filtering', 'derived_virtual_data'),
+Input("stored-subset","data")
+])
+def display_viz_data(subset_click,alias,data,prev_data):
+    
+    if (subset_click >0) and (len(data)>0) and alias is not None :
+        if len(prev_data) == 0:
+            return [{'alias': alias, 'data': data}], 0
+        else:
+            subsets = prev_data
+            subsets.append({'alias': alias, 'data': data})
+            return subsets, 0
 
         
-# @callback(
-#     Output('subset-list','children'),
-#     Input("stored-subset","data")
-# )
-# def display_subsets(data):
-#     #print(data)
-#     if len(data) > 0:
-#         subsets = []
-#         for datum in data:
-#             subsets.append(dbc.ListGroupItem(datum['alias']))
-#         return subsets
+@callback(
+    Output('subset-list','children'),
+    Input("stored-subset","data")
+)
+def display_subsets(data):
+    #print(data)
+    if len(data) > 0:
+        subsets = []
+        for datum in data:
+            subsets.append(dbc.ListGroupItem(datum['alias']))
+        return subsets
 
-#     else:
-#         #print('stored data none')
-#         #print(data)
-#         return 'No subset yet'
+    else:
+        #print('stored data none')
+        #print(data)
+        return 'No subset yet'
                                     
